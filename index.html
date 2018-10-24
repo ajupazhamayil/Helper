@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+
+  <body>
+    <div id="map"></div>
+    <script>
+      var markers = [];
+      var uniqueId = 1;
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 9.984735, lng: 76.277180},
+          zoom: 14
+        });
+
+        //Attach click event handler to the map.
+        google.maps.event.addListener(map, 'click', function (e) {
+        //Determine the location where the user has clicked.
+        var location = e.latLng;
+        DeleteAllMarkers();
+        //Create a marker and placed it on the map.
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+ 
+        //Set unique id
+        marker.id = uniqueId;
+        uniqueId++;
+ 
+        //Attach click event handler to the marker.
+        google.maps.event.addListener(marker, "click", function (e) {
+            var content = 'Latitude: ' + location.lat() + '<br />Longitude: ' + location.lng();
+            content += "<br /><input type = 'button' value = 'Delete' onclick = 'DeleteMarker(" + marker.id + ");' value = 'Delete' />";
+            var infoWindow = new google.maps.InfoWindow({
+               content: content
+            });
+            infoWindow.open(map, marker);
+        });
+ 
+        //Add marker to the array.  
+        markers.push(marker);
+      });
+    };
+
+
+    function DeleteMarker(id) {
+        //Find and remove the marker from the Array
+        for (var i = 0; i < markers.length; i++) {
+            if (markers[i].id == id) {
+                //Remove the marker from Map                  
+                markers[i].setMap(null);
+ 
+                //Remove the marker from array.
+                markers.splice(i, 1);
+                return;
+            }
+        }
+      };
+
+
+    function DeleteAllMarkers() {
+        //Find and remove the marker from the Array
+        for (var i = 0; i < markers.length; i++) {
+                //Remove the marker from Map                  
+                markers[i].setMap(null);
+ 
+                //Remove the marker from array.
+                markers.splice(i, 1);
+                return;
+        }
+      };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq_NfdZscVJ8ZPtanPN0LOzJhlNDw6xkg&callback=initMap"
+    async defer></script>
+  </body>
+</html><!DOCTYPE html>
