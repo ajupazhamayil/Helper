@@ -48,6 +48,7 @@ def helper():
     	conn = psycopg2.connect(host="localhost",database="cloud", user="postgres", password="postgres")
     	cur = conn.cursor()
 	while(len(ret_list)<2 and radius <5000):
+	    ret_list = []
 	    query = "SELECT name, ST_AsText(location) FROM  customer WHERE ST_DWithin(st_transform(location::geometry,900913),st_transform(ST_GeomFromText('POINT("+str(location['lon'])+" "+str(location['lat'])+")',4326),900913) ,"+str(radius)+")"
 	    print query
 	    cur.execute(query)
@@ -56,7 +57,7 @@ def helper():
 	        temp = temp.replace("POINT(", "")
 	        temp = temp.replace(")", "")
 	        temp = temp.split(" ")
-	        ret_list.append(temp)
+	        ret_list.append({'pname':row[0],"lon":temp[0], "lat":temp[1]})
 	    radius = radius*2
 
 	print ret_list
@@ -68,7 +69,7 @@ def helper():
             conn.close()
             print('Database connection closed.')
 
-    return jsonify(str(ret_list))
+    return jsonify(results = ret_list)
 
 
 if __name__ == '__main__':

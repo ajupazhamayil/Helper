@@ -26,6 +26,7 @@
     <script type="text/javascript"></script>
     <script>
       var markers = [];
+      var markers2 = [];
       var uniqueId = 1;
       var map;
       function initMap() {
@@ -38,7 +39,9 @@
         google.maps.event.addListener(map, 'click', function (e) {
         //Determine the location where the user has clicked.
         var location = e.latLng;
+	console.log(location)
         DeleteAllMarkers();
+	markers2=[]
         //Create a marker and placed it on the map.
         var marker = new google.maps.Marker({
             position: location,
@@ -52,8 +55,8 @@
         //Attach click event handler to the marker.
         google.maps.event.addListener(marker, "click", function (e) {
             var content = 'Latitude: ' + location.lat() + '<br />Longitude: ' + location.lng();
-            content += "<br /><input type = 'button' value = 'Delete' onclick = 'DeleteMarker(" + marker.id + ");' value = 'Delete' />";
-            content += "<br /><input type = 'button' value = 'Request Help' onclick = 'RequestHelp (" + marker.id + ");' value = 'Delete' />";
+            content += "<br /><input type = 'button' value = 'Delete' onclick = 'DeleteMarker(" + marker.id + ");'/>";
+            content += "<br /><input type = 'button' value = 'Request Help' onclick = 'RequestHelp (" + marker.id + ");'/>";
             var infoWindow = new google.maps.InfoWindow({
                content: content
             });
@@ -95,31 +98,66 @@
 	//Find and remove the marker from the Array
 	alert("request has been sent with location " + lat+" "+lon);
 	var a={"lon":lon, "lat": lat};
-	// ajax the JSON to the server
+	
+
+	$.ajax({
+	    type: 'POST',
+	    url: '/help',
+	    data: JSON.stringify (a),
+	    success: function(data) { 
+		//console.log(JSON.stringify(data));
+		var jsonarray = data.results;
+ 		var infoWindow = new google.maps.InfoWindow();
+		for (var i=0; i<jsonarray.length;i++){
+  			var obj = jsonarray[i];
+			//console.log(i+"--"+obj.lat);
+			//Create a marker and placed it on the map.
+			var myLatlng = new google.maps.LatLng(parseFloat(obj.lat), parseFloat(obj.lon));
+			var marker = (new google.maps.Marker({
+			    position: myLatlng,
+			    map: map,
+			    title: obj.pname
+			}));
+			markers2.push(marker);
+			console.log("pushin marker "+i+" for "+obj.pname);
+
+            //Attach click event to the marker.
+            (function (marker, obj) {
+                google.maps.event.addListener(marker, "click", function (e) {
+                    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
+                    infoWindow.setContent("<div style = 'width:200px;min-height:40px'>" + obj.pname + "</div>");
+                    infoWindow.open(map, marker);
+                });
+            })(marker, obj);
 
 
-$.ajax({
-    type: 'POST',
-    url: '/help',
-    data: JSON.stringify (a),
-    success: function(data) { alert('data: ' + JSON.stringify(data)); },
-    contentType: "application/json",
-    dataType: 'json'
-});
+
+
+			}
+		},
+	    contentType: "application/json",
+	    dataType: 'json'
+	});
 
       };
 
 
     function DeleteAllMarkers() {
+	console.log(markers2.length)
         //Find and remove the marker from the Array
         for (var i = 0; i < markers.length; i++) {
                 //Remove the marker from Map                  
                 markers[i].setMap(null);
- 
                 //Remove the marker from array.
                 markers.splice(i, 1);
-                return;
         }
+
+        //Find and remove the marker from the Array
+        for (var i = 0; i < markers2.length; i++) {
+                //Remove the marker from Map                  
+                markers2[i].setMap(null);       
+        }
+	return;
       };
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq_NfdZscVJ8ZPtanPN0LOzJhlNDw6xkg&callback=initMap"
