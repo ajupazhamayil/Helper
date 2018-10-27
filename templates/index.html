@@ -29,6 +29,7 @@
       var markers2 = [];
       var uniqueId = 1;
       var map;
+      var currentInfoWindow = null;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 9.984735, lng: 76.277180},
@@ -60,6 +61,7 @@
             var infoWindow = new google.maps.InfoWindow({
                content: content
             });
+	    currentInfoWindow=infoWindow;
             infoWindow.open(map, marker);
         });
  
@@ -108,6 +110,10 @@
 		//console.log(JSON.stringify(data));
 		var jsonarray = data.results;
  		var infoWindow = new google.maps.InfoWindow();
+		    if (currentInfoWindow != null) { 
+			currentInfoWindow.close(); 
+			currentInfoWindow=null;
+		    } 
 		for (var i=0; i<jsonarray.length;i++){
   			var obj = jsonarray[i];
 			//console.log(i+"--"+obj.lat);

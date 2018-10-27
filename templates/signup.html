@@ -28,6 +28,7 @@
       var markers = [];
       var uniqueId = 1;
       var map;
+      var currWindow;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 9.984735, lng: 76.277180},
@@ -57,6 +58,7 @@
             var infoWindow = new google.maps.InfoWindow({
                content: content
             });
+	    currWindow=infoWindow;	
             infoWindow.open(map, marker);
         });
  
@@ -69,16 +71,12 @@
     function SignUp(id, fname) {
 	var lat, lon;
         for (var i = 0; i < markers.length; i++) {
-            if (markers[i].id == id) {
-                //Remove the marker from Map                  
+            if (markers[i].id == id) {                 
                 lat = markers[i].getPosition().lat();
 		lon = markers[i].getPosition().lng();
  		}
         }
         
-
-	//Find and remove the marker from the Array
-	alert("Signup request has been sent with lat " + lat+" for "+fname);
 	var a={"name":fname, "lon":lon, "lat": lat};
 
 	$.ajax({
@@ -86,7 +84,8 @@
 	    url: '/signuphandler',
 	    data: JSON.stringify (a),
 	    success: function(data) { 
-		alert('data: ' + JSON.stringify(data)); 
+		alert('you are succesfully signedup with ' + JSON.stringify(data)); 
+		currWindow.close();
 	    },
 	    contentType: "application/json",
 	    dataType: 'json'
