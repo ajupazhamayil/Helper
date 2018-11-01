@@ -1,1 +1,1 @@
-web: python mapServer.py
+gunicorn src.mapServer:app --log-file=-
