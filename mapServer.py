@@ -34,7 +34,7 @@ def signup():
             conn.close()
             print('Database connection closed.')
 
-    return jsonify(request.data)
+    return request.data
 
 
 
@@ -45,7 +45,7 @@ def helper():
     radius = 1000
     ret_list = []
     try:
-        conn = psycopg2.connect(host="localhost",database="cloud", user="postgres", password="postgres")
+        conn = psycopg2.connect(host="ec2-107-21-93-132.compute-1.amazonaws.com",port=5432,database="dfl7vmdrih02fq", user="ffxpvacguvezkx", password="f769d3861876958f13045c328e756102e3a631dfa7926d5570c201c8468aaa72")
         cur = conn.cursor()
         while (len(ret_list)<2 and radius <5000):
             ret_list = []
