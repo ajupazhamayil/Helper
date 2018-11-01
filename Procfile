@@ -1,1 +1,1 @@
-gunicorn src.app:app --log-file=-
+web: gunicorn mapServer:app --log-file=-
