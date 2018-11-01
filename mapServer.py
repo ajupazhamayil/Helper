@@ -47,21 +47,21 @@ def helper():
     try:
         conn = psycopg2.connect(host="localhost",database="cloud", user="postgres", password="postgres")
         cur = conn.cursor()
-    while(len(ret_list)<2 and radius <5000):
-        ret_list = []
-        query = "SELECT name, ST_AsText(location) FROM  customer WHERE ST_DWithin(st_transform(location::geometry,900913),st_transform(ST_GeomFromText('POINT("+str(location['lon'])+" "+str(location['lat'])+")',4326),900913) ,"+str(radius)+")"
-        print (query)
-        cur.execute(query)
-        for row in cur:
-            temp = row[1]
-            temp = temp.replace("POINT(", "")
-            temp = temp.replace(")", "")
-            temp = temp.split(" ")
-            ret_list.append({'pname':row[0],"lon":temp[0], "lat":temp[1]})
-        radius = radius*2
+        while (len(ret_list)<2 and radius <5000):
+            ret_list = []
+            query = "SELECT name, ST_AsText(location) FROM  customer WHERE ST_DWithin(st_transform(location::geometry,900913),st_transform(ST_GeomFromText('POINT("+str(location['lon'])+" "+str(location['lat'])+")',4326),900913) ,"+str(radius)+")"
+            print (query)
+            cur.execute(query)
+            for row in cur:
+                temp = row[1]
+                temp = temp.replace("POINT(", "")
+                temp = temp.replace(")", "")
+                temp = temp.split(" ")
+                ret_list.append({'pname':row[0],"lon":temp[0], "lat":temp[1]})
+            radius = radius*2
 
-    print (ret_list)
-    cur.close()
+        print (ret_list)
+        cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
