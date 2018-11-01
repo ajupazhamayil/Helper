@@ -1,1 +1,1 @@
-gunicorn src.mapServer:app --log-file=-
+gunicorn src.app:app --log-file=-
