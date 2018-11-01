@@ -20,7 +20,7 @@ def signup():
     location = json.loads(request.data)
     #print location['lon']
     try:
-        conn = psycopg2.connect(host="localhost",database="cloud", user="postgres", password="postgres")
+        conn = psycopg2.connect(host="ec2-107-21-93-132.compute-1.amazonaws.com",port=5432,database="dfl7vmdrih02fq", user="ffxpvacguvezkx", password="f769d3861876958f13045c328e756102e3a631dfa7926d5570c201c8468aaa72")
         cur = conn.cursor()
         query = "insert into customer values(1,'"+location['name']+"' ,st_setsrid(st_point("+str(location['lon'])+","+str(location['lat'])+"),4326))"
         print (query)
@@ -73,4 +73,4 @@ def helper():
 
 
 if __name__ == '__main__':
-    app.run(host= '127.0.0.1',port=8080,debug=True)
+    app.run(debug=True)
