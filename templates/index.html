@@ -58,12 +58,14 @@
         //Attach click event handler to the marker.
         google.maps.event.addListener(marker, "click", function (e) {
             var content = 'Latitude: ' + location.lat() + '<br />Longitude: ' + location.lng();
-            content += "<br /><input type = 'button' value = 'Delete' onclick = 'DeleteMarker(" + marker.id + ");'/>";
-            content += "<br /><input type = 'button' value = 'Request Help' onclick = 'RequestHelp (" + marker.id + ");'/>";
+            //content += "<br /><input type = 'button' value = 'Delete' onclick = 'DeleteMarker(" + marker.id + ");'/>";
+            content += "<br /> PhNumber : <input type='text' name='fname' />";
+            content += "<br /><input type = 'button' value = 'ReadyToHelp' onclick = 'SignUp (" + marker.id +',document.getElementsByName("fname")[0].value);\x27 />';
+            content += "<br /><input type = 'button' value = 'HelpMe!' onclick = 'RequestHelp (" + marker.id + ',document.getElementsByName("fname")[0].value);\x27/>';
             var infoWindow = new google.maps.InfoWindow({
                content: content
             });
-	    currentInfoWindow=infoWindow;
+	          currentInfoWindow=infoWindow;
             infoWindow.open(map, marker);
         });
  
@@ -88,44 +90,70 @@
       };
 
 
-    function RequestHelp(id) {
-	var lat, lon;
-        for (var i = 0; i < markers.length; i++) {
-            if (markers[i].id == id) {
-                //Remove the marker from Map                  
-                lat = markers[i].getPosition().lat();
-		lon = markers[i].getPosition().lng();
- 		}
-        }
-        
+    function RequestHelp(id, fname) {
+      	var lat, lon;
+              for (var i = 0; i < markers.length; i++) {
+                  if (markers[i].id == id) {
+                      //Remove the marker from Map                  
+                      lat = markers[i].getPosition().lat();
+                  		lon = markers[i].getPosition().lng();
+                   		}
+              }
+              
 
-	//Find and remove the marker from the Array
-	alert("request has been sent with location " + lat+" "+lon);
-	var a={"lon":lon, "lat": lat};
-	
+      	//Find and remove the marker from the Array
+      	alert("request has been sent with location " + lat+" "+lon);
+      	var a={"name":fname, "lon":lon, "lat": lat, "rtype":"red"};
+      	
 
-	$.ajax({
-	    type: 'POST',
-	    url: '/help',
-	    data: JSON.stringify (a),
-	    success: function(data) { 
-		markHelpersInMap(data)
-		},
-	    contentType: "application/json",
-	    dataType: 'json'
-	});
+      	$.ajax({
+      	    type: 'POST',
+      	    url: '/help',
+      	    data: JSON.stringify (a),
+      	    success: function(data) { 
+      		    markHelpersInMap(data)
+      		  },
+      	  contentType: "application/json",
+      	  dataType: 'json'
+      	  });
+    };
 
-      };
+
+
+    function SignUp(id, fname) {
+      var lat, lon;
+            for (var i = 0; i < markers.length; i++) {
+                if (markers[i].id == id) {                 
+                    lat = markers[i].getPosition().lat();
+                    lon = markers[i].getPosition().lng();
+                }
+            }
+            //data to send to backend
+            var a={"name":fname, "lon":lon, "lat": lat, "rtype":"green"};
+
+            $.ajax({
+                type: 'POST',
+                url: '/signuphandler',
+                data: JSON.stringify (a),
+                success: function(data) { 
+                    alert('you are succesfully signedup with ' + JSON.stringify(data)); 
+                    currentInfoWindow.close();
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+
+    };
 
 
     function markHelpersInMap(data){
 		//console.log(JSON.stringify(data));
 		var jsonarray = data.results;
  		var infoWindow = new google.maps.InfoWindow();
-		    if (currentInfoWindow != null) { 
-			currentInfoWindow.close(); 
-			currentInfoWindow=null;
-		    } 
+		if (currentInfoWindow != null) { 
+    		currentInfoWindow.close(); 
+    		currentInfoWindow=null;
+		} 
 
 		for (var i=0; i<jsonarray.length;i++){
   			var obj = jsonarray[i];
@@ -135,14 +163,14 @@
 			    url: "/static/red.png", // url
 			    scaledSize: new google.maps.Size(50, 50), // scaled size
 			    origin: new google.maps.Point(0,0), // origin
-			    anchor: new google.maps.Point(0, 0) // anchor
+			    anchor: new google.maps.Point(25, 50) // anchor
 			};
 
 			var greenIcon = {
 			    url: "/static/green.png", // url
 			    scaledSize: new google.maps.Size(50, 50), // scaled size
 			    origin: new google.maps.Point(0,0), // origin
-			    anchor: new google.maps.Point(0, 0) // anchor
+			    anchor: new google.maps.Point(25, 50) // anchor
 			};
 
 			//Create a marker and placed it on the map.
@@ -161,7 +189,7 @@
 			    position: myLatlng,
 			    map: map,
 			    title: obj.pname,
-			    icon: greenIcon,
+          icon: greenIcon,
 			    }));
 			}
 			//console.log(i+"--"+obj.lat);

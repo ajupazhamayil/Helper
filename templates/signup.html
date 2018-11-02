@@ -40,12 +40,12 @@
         //Determine the location where the user has clicked.
         var location = e.latLng;
         DeleteAllMarkers();
-	var greenIcon = {
-	    url: "/static/green.png", // url
-	    scaledSize: new google.maps.Size(50, 50), // scaled size
-	    origin: new google.maps.Point(0,0), // origin
-	    anchor: new google.maps.Point(0, 0) // anchor
-	};
+    	var greenIcon = {
+    	    url: "/static/green.png", // url
+    	    scaledSize: new google.maps.Size(50, 50), // scaled size
+    	    origin: new google.maps.Point(0,0), // origin
+    	    anchor: new google.maps.Point(0, 0) // anchor
+    	};
         //Create a marker and placed it on the map.
         var marker = new google.maps.Marker({
             position: location,
@@ -60,12 +60,12 @@
         //Attach click event handler to the marker.
         google.maps.event.addListener(marker, "click", function (e) {
             var content = 'Latitude: ' + location.lat() + '<br />Longitude: ' + location.lng();
-	    content += "<br /> Name : <input type='text' name='fname' />";
-            content += "<br /><input type = 'button' value = 'SignUp' onclick = 'SignUp (" + marker.id +',document.getElementsByName("fname")[0].value);\x27 />';
+	          content += "<br /> Name : <input type='text' name='fname' />";
+            content += "<br /><input type = 'button' value = 'ReadyToHelp' onclick = 'SignUp (" + marker.id +',document.getElementsByName("fname")[0].value);\x27 />';
             var infoWindow = new google.maps.InfoWindow({
                content: content
             });
-	    currWindow=infoWindow;	
+	           currWindow=infoWindow;	
             infoWindow.open(map, marker);
         });
  
@@ -91,8 +91,8 @@
 	    url: '/signuphandler',
 	    data: JSON.stringify (a),
 	    success: function(data) { 
-		alert('you are succesfully signedup with ' + JSON.stringify(data)); 
-		currWindow.close();
+      		alert('you are succesfully signedup with ' + JSON.stringify(data)); 
+      		currWindow.close();
 	    },
 	    contentType: "application/json",
 	    dataType: 'json'
