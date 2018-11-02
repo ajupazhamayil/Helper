@@ -40,10 +40,17 @@
         //Determine the location where the user has clicked.
         var location = e.latLng;
         DeleteAllMarkers();
+	var greenIcon = {
+	    url: "/static/green.png", // url
+	    scaledSize: new google.maps.Size(50, 50), // scaled size
+	    origin: new google.maps.Point(0,0), // origin
+	    anchor: new google.maps.Point(0, 0) // anchor
+	};
         //Create a marker and placed it on the map.
         var marker = new google.maps.Marker({
             position: location,
-            map: map
+            map: map,
+	    icon: greenIcon,
         });
  
         //Set unique id
@@ -76,8 +83,8 @@
 		lon = markers[i].getPosition().lng();
  		}
         }
-        
-	var a={"name":fname, "lon":lon, "lat": lat};
+        //data to send to backend
+	var a={"name":fname, "lon":lon, "lat": lat, "rtype":"green"};
 
 	$.ajax({
 	    type: 'POST',

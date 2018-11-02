@@ -36,17 +36,19 @@
           zoom: 14
         });
 
-        //Attach click event handler to the map.
-        google.maps.event.addListener(map, 'click', function (e) {
+      //Attach click event handler to the map.
+      google.maps.event.addListener(map, 'click', function (e) {
         //Determine the location where the user has clicked.
         var location = e.latLng;
 	console.log(location)
         DeleteAllMarkers();
 	markers2=[]
+
         //Create a marker and placed it on the map.
         var marker = new google.maps.Marker({
             position: location,
-            map: map
+            map: map,
+	    draggable:true,
         });
  
         //Set unique id
@@ -107,6 +109,16 @@
 	    url: '/help',
 	    data: JSON.stringify (a),
 	    success: function(data) { 
+		markHelpersInMap(data)
+		},
+	    contentType: "application/json",
+	    dataType: 'json'
+	});
+
+      };
+
+
+    function markHelpersInMap(data){
 		//console.log(JSON.stringify(data));
 		var jsonarray = data.results;
  		var infoWindow = new google.maps.InfoWindow();
@@ -114,38 +126,61 @@
 			currentInfoWindow.close(); 
 			currentInfoWindow=null;
 		    } 
+
 		for (var i=0; i<jsonarray.length;i++){
   			var obj = jsonarray[i];
-			//console.log(i+"--"+obj.lat);
+			var marker;
+
+			var redIcon = {
+			    url: "/static/red.png", // url
+			    scaledSize: new google.maps.Size(50, 50), // scaled size
+			    origin: new google.maps.Point(0,0), // origin
+			    anchor: new google.maps.Point(0, 0) // anchor
+			};
+
+			var greenIcon = {
+			    url: "/static/green.png", // url
+			    scaledSize: new google.maps.Size(50, 50), // scaled size
+			    origin: new google.maps.Point(0,0), // origin
+			    anchor: new google.maps.Point(0, 0) // anchor
+			};
+
 			//Create a marker and placed it on the map.
 			var myLatlng = new google.maps.LatLng(parseFloat(obj.lat), parseFloat(obj.lon));
-			var marker = (new google.maps.Marker({
+			if(obj.rtype == 'red') {
+			    console.log("marker getting made");
+			    marker = (new google.maps.Marker({
 			    position: myLatlng,
 			    map: map,
-			    title: obj.pname
-			}));
+			    title: obj.pname,
+			    icon: redIcon,
+			    }));
+			}
+			else {
+			    marker = (new google.maps.Marker({
+			    position: myLatlng,
+			    map: map,
+			    title: obj.pname,
+			    icon: greenIcon,
+			    }));
+			}
+			//console.log(i+"--"+obj.lat);
+
 			markers2.push(marker);
 			console.log("pushin marker "+i+" for "+obj.pname);
 
-            //Attach click event to the marker.
-            (function (marker, obj) {
-                google.maps.event.addListener(marker, "click", function (e) {
-                    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
-                    infoWindow.setContent("<div style = 'width:200px;min-height:40px'>" + obj.pname + "</div>");
-                    infoWindow.open(map, marker);
-                });
-            })(marker, obj);
+			//Attach click event to the marker.
+			(function (marker, obj) {
+				google.maps.event.addListener(marker, "click", function (e) {
+				    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
+				    infoWindow.setContent("<div style = 'width:200px;min-height:40px'>" + obj.pname + "</div>");
+				    infoWindow.open(map, marker);
+				});
+			})(marker, obj);
 
+		}
+    }
 
-
-
-			}
-		},
-	    contentType: "application/json",
-	    dataType: 'json'
-	});
-
-      };
 
 
     function DeleteAllMarkers() {

@@ -22,7 +22,8 @@ def signup():
     try:
         conn = psycopg2.connect(host="ec2-107-21-93-132.compute-1.amazonaws.com",port=5432,database="dfl7vmdrih02fq", user="ffxpvacguvezkx", password="f769d3861876958f13045c328e756102e3a631dfa7926d5570c201c8468aaa72")
         cur = conn.cursor()
-        query = "insert into customer values(1,'"+location['name']+"' ,st_setsrid(st_point("+str(location['lon'])+","+str(location['lat'])+"),4326))"
+        query = "insert into customer (id, name, location, request_type)values(1,'"+location['name']+"'"
+        query = query +" ,st_setsrid(st_point("+str(location['lon'])+","+str(location['lat'])+"),4326), '"+location['rtype']+"')"
         print (query)
         cur.execute(query)
         conn.commit()
@@ -49,7 +50,7 @@ def helper():
         cur = conn.cursor()
         while (len(ret_list)<2 and radius <5000):
             ret_list = []
-            query = "SELECT name, ST_AsText(location) FROM  customer WHERE ST_DWithin(st_transform(location::geometry,900913),st_transform(ST_GeomFromText('POINT("+str(location['lon'])+" "+str(location['lat'])+")',4326),900913) ,"+str(radius)+")"
+            query = "SELECT name, ST_AsText(location), request_type FROM  customer WHERE ST_DWithin(st_transform(location::geometry,900913),st_transform(ST_GeomFromText('POINT("+str(location['lon'])+" "+str(location['lat'])+")',4326),900913) ,"+str(radius)+")"
             print (query)
             cur.execute(query)
             for row in cur:
@@ -57,7 +58,7 @@ def helper():
                 temp = temp.replace("POINT(", "")
                 temp = temp.replace(")", "")
                 temp = temp.split(" ")
-                ret_list.append({'pname':row[0],"lon":temp[0], "lat":temp[1]})
+                ret_list.append({'pname':row[0],"lon":temp[0], "lat":temp[1], "rtype":row[2]})
             radius = radius*2
 
         print (ret_list)
