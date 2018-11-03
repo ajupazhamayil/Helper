@@ -1,6 +1,2 @@
 heroku logs --tail
 heroku ps:scale web=1
-
-
-
-heroku pg:psql postgresql-symmetrical-61298 --app cloudprojectmap
