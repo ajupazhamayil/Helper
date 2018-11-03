@@ -20,7 +20,7 @@ def signup():
     location = json.loads(request.data)
     #print location['lon']
     try:
-        conn = psycopg2.connect(host="ec2-107-21-93-132.compute-1.amazonaws.com",port=5432,database="dfl7vmdrih02fq", user="ffxpvacguvezkx", password="f769d3861876958f13045c328e756102e3a631dfa7926d5570c201c8468aaa72")
+        conn = psycopg2.connect(YOURCONECTIONVARIABLES)
         cur = conn.cursor()
         query = "insert into customer (id, name, location, request_type)values(1,'"+location['name']+"'"
         query = query +" ,st_setsrid(st_point("+str("{0:.15f}".format(location['lon']))+","+str("{0:.15f}".format(location['lat']))+"),4326), '"+location['rtype']+"')"
@@ -46,7 +46,7 @@ def helper():
     radius = 1000
     ret_list = []
     try:
-        conn = psycopg2.connect(host="ec2-107-21-93-132.compute-1.amazonaws.com",port=5432,database="dfl7vmdrih02fq", user="ffxpvacguvezkx", password="f769d3861876958f13045c328e756102e3a631dfa7926d5570c201c8468aaa72")
+        conn = psycopg2.connect(YOURCONNECTIONVARIABLES)
         cur = conn.cursor()
         while (len(ret_list)<2 and radius <5000):
             ret_list = []
